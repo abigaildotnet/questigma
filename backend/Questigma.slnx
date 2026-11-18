@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Questigma.Api/Questigma.Api.csproj" />
+    <Project Path="src/Questigma.Application/Questigma.Application.csproj" />
+    <Project Path="src/Questigma.Domain/Questigma.Domain.csproj" />
+    <Project Path="src/Questigma.Infrastructure/Questigma.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Questigma.IntegrationTests/Questigma.IntegrationTests.csproj" />
+    <Project Path="tests/Questigma.UnitTests/Questigma.UnitTests.csproj" />
+  </Folder>
+</Solution>
