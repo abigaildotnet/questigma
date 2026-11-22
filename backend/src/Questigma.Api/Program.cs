@@ -6,19 +6,22 @@ builder.Services.AddInfrastructure(builder.Configuration);
 var app = builder.Build();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
-app.MapGet("/health/db", async (QuestigmaDbContext db, CancellationToken cancellationToken) =>
+if (app.Environment.IsDevelopment())
 {
-    try
+    app.MapGet("/health/db", async (QuestigmaDbContext db, CancellationToken cancellationToken) =>
     {
-        return await db.Database.CanConnectAsync(cancellationToken)
-            ? Results.Ok(new { status = "healthy" })
-            : Results.StatusCode(StatusCodes.Status503ServiceUnavailable);
-    }
-    catch (Exception exception) when (exception is not OperationCanceledException)
-    {
-        return Results.StatusCode(StatusCodes.Status503ServiceUnavailable);
-    }
-});
+        try
+        {
+            return await db.Database.CanConnectAsync(cancellationToken)
+                ? Results.Ok(new { status = "healthy" })
+                : Results.StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            return Results.StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }
+    });
+}
 
 app.Run();
 

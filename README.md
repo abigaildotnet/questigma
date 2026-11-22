@@ -20,7 +20,7 @@ dotnet test backend/tests/Questigma.UnitTests/Questigma.UnitTests.csproj --no-bu
 dotnet run --project backend/src/Questigma.Api --urls http://localhost:5000
 ```
 
-Em outro terminal, `curl http://localhost:5000/health` deve retornar HTTP 200. `curl http://localhost:5000/health/db` retorna HTTP 200 quando a conexão com PostgreSQL funciona e HTTP 503 caso contrário, sem detalhes da conexão na resposta. A API exige a configuração `ConnectionStrings:Questigma` na inicialização e não executa migrations automaticamente.
+Em outro terminal, `curl http://localhost:5000/health` deve retornar HTTP 200. Apenas em `Development`, `curl http://localhost:5000/health/db` retorna HTTP 200 quando a conexão com PostgreSQL funciona e HTTP 503 caso contrário, sem detalhes da conexão na resposta. Em outros ambientes, `/health/db` não é registrado e retorna HTTP 404. A API exige a configuração `ConnectionStrings:Questigma` na inicialização e não executa migrations automaticamente.
 
 ## PostgreSQL local
 
@@ -48,13 +48,14 @@ As versões fixadas são .NET 10, PostgreSQL 17, EF Core/Design/`dotnet-ef` 10.0
 
 ```powershell
 dotnet tool restore
+dotnet tool run dotnet-ef dbcontext info --project backend/src/Questigma.Infrastructure --startup-project backend/src/Questigma.Api
 dotnet tool run dotnet-ef migrations add NomeDaMigration --project backend/src/Questigma.Infrastructure --startup-project backend/src/Questigma.Api --output-dir Persistence/Migrations
 dotnet tool run dotnet-ef database update --project backend/src/Questigma.Infrastructure --startup-project backend/src/Questigma.Api
 ```
 
 Crie a primeira migration somente quando houver entidades e configurações reais. Nenhuma migration vazia é incluída nesta issue. A aplicação de migrations é uma ação explícita; a API não altera o esquema ao iniciar.
 
-Se `docker compose config` reclamar de variáveis ausentes, confira `.env` na raiz e seus três valores obrigatórios. Se o Compose não alcançar o daemon, inicie Docker Desktop/Engine. Se a porta estiver ocupada, altere `POSTGRES_PORT` em `.env` e a porta na connection string da API. Se `/health` retornar 200 mas `/health/db` retornar 503, confira se o contêiner está saudável com `docker compose ps`, a connection string e se a senha corresponde à do volume existente; alterar `POSTGRES_PASSWORD` após criar o volume não redefine o usuário já criado. Se a API apontar `ConnectionStrings__Questigma` ausente, defina essa variável no **mesmo terminal** em que executar `dotnet run`.
+Se `docker compose config` reclamar de variáveis ausentes, confira `.env` na raiz e seus três valores obrigatórios. Se o Compose não alcançar o daemon, inicie Docker Desktop/Engine. Se a porta estiver ocupada, altere `POSTGRES_PORT` em `.env` e a porta na connection string da API. Em `Development`, se `/health` retornar 200 mas `/health/db` retornar 503, confira se o contêiner está saudável com `docker compose ps`, a connection string e se a senha corresponde à do volume existente; alterar `POSTGRES_PASSWORD` após criar o volume não redefine o usuário já criado. Se a API apontar `ConnectionStrings__Questigma` ausente, defina essa variável no **mesmo terminal** em que executar `dotnet run`.
 
 O monólito usa quatro camadas: Domain, Application, Infrastructure e Api. As dependências são Application → Domain, Infrastructure → Application e Domain, Api → Application e Infrastructure. Dentro de cada camada, as funcionalidades futuras serão agrupadas em Investigation, Activities, Progression e Identity. Esses diretórios estão vazios por enquanto.
 

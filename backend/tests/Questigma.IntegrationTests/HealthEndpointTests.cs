@@ -28,4 +28,14 @@ public class HealthEndpointTests : IClassFixture<WebApplicationFactory<Program>>
         Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
         Assert.DoesNotContain("Password", await response.Content.ReadAsStringAsync());
     }
+
+    [Fact]
+    public async Task DatabaseHealthIsNotMappedInProduction()
+    {
+        using var productionFactory = _factory.WithWebHostBuilder(builder => builder.UseEnvironment("Production"));
+        using var client = productionFactory.CreateClient();
+
+        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/health")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/health/db")).StatusCode);
+    }
 }
