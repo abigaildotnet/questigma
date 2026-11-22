@@ -53,7 +53,11 @@ dotnet tool run dotnet-ef migrations add NomeDaMigration --project backend/src/Q
 dotnet tool run dotnet-ef database update --project backend/src/Questigma.Infrastructure --startup-project backend/src/Questigma.Api
 ```
 
-A migration `InitialCatalog` cria somente `catalog_cases`. A aplicação de migrations é uma ação explícita; a API não altera o esquema ao iniciar.
+A migration `CreateCatalogCasesTable` cria somente `catalog_cases` e seu índice de publicação. A aplicação de migrations é uma ação explícita; a API não altera o esquema ao iniciar.
+
+### Convenção de migrations
+
+Use nomes descritivos em inglês e PascalCase, no formato `AcaoObjetoDetalheOpcional`, que expressem a alteração no banco (por exemplo, `CreateInvestigationsTable` ou `AddVersionToInvestigations`). Evite nomes genéricos como `UpdateDatabase` e `FixTables`. Como regra geral, crie uma migration por tabela nova e separe alterações de tabelas diferentes. Índices e constraints relacionados à mesma tabela podem acompanhar sua criação ou alteração. Agrupe mudanças interdependentes somente quando necessário para manter a consistência e documente o motivo. Não reescreva migrations já aplicadas em ambientes compartilhados; crie uma nova migration para evoluir o esquema.
 
 Se `docker compose config` reclamar de variáveis ausentes, confira `.env` na raiz e seus três valores obrigatórios. Se o Compose não alcançar o daemon, inicie Docker Desktop/Engine. Se a porta estiver ocupada, altere `POSTGRES_PORT` em `.env` e a porta na connection string da API. Em `Development`, se `/health` retornar 200 mas `/health/db` retornar 503, confira se o contêiner está saudável com `docker compose ps`, a connection string e se a senha corresponde à do volume existente; alterar `POSTGRES_PASSWORD` após criar o volume não redefine o usuário já criado. Se a API apontar `ConnectionStrings__Questigma` ausente, defina essa variável no **mesmo terminal** em que executar `dotnet run`.
 

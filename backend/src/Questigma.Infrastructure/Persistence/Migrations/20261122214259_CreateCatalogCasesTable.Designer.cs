@@ -12,8 +12,8 @@ using Questigma.Infrastructure.Persistence;
 namespace Questigma.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(QuestigmaDbContext))]
-    [Migration("20261122211739_InitialCatalog")]
-    partial class InitialCatalog
+    [Migration("20261122214259_CreateCatalogCasesTable")]
+    partial class CreateCatalogCasesTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
