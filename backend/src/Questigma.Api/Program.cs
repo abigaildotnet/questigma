@@ -7,11 +7,11 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddOpenApi();
 var app = builder.Build();
 
-app.MapOpenApi();
 app.MapCaseEndpoints();
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 if (app.Environment.IsDevelopment())
 {
+    app.MapOpenApi();
     app.MapGet("/health/db", async (QuestigmaDbContext db, CancellationToken cancellationToken) =>
     {
         try

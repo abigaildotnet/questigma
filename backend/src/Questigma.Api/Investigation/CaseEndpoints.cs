@@ -2,9 +2,6 @@ using Questigma.Application.Investigation;
 
 namespace Questigma.Api.Investigation;
 
-public sealed record CaseSummaryResponse(Guid Id, string Title, string Synopsis);
-public sealed record CaseDetailsResponse(Guid Id, string Title, string Synopsis, string Introduction);
-
 public static class CaseEndpoints
 {
     public static IEndpointRouteBuilder MapCaseEndpoints(this IEndpointRouteBuilder endpoints)
