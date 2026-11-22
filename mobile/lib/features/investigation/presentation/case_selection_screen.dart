@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'case_repository.dart';
-import 'case_summary.dart';
+import '../domain/case_repository.dart';
+import '../domain/case_summary.dart';
 
 class CaseSelectionScreen extends StatefulWidget {
   const CaseSelectionScreen({required this.repository, super.key});

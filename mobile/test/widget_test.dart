@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:questigma/app/questigma_app.dart';
-import 'package:questigma/cases/case_repository.dart';
-import 'package:questigma/cases/case_summary.dart';
+import 'package:questigma/features/investigation/domain/case_repository.dart';
+import 'package:questigma/features/investigation/domain/case_summary.dart';
 
 class FakeCaseRepository implements CaseRepository {
   FakeCaseRepository(this.load);
@@ -76,5 +76,22 @@ void main() {
     await tester.pumpAndSettle();
     expect(attempts, 2);
     expect(find.text('Caso recuperado'), findsOneWidget);
+  });
+
+  testWidgets('shows a retry action after a timeout', (tester) async {
+    var attempts = 0;
+    final repository = FakeCaseRepository(() async {
+      attempts++;
+      if (attempts == 1) throw TimeoutException('request timed out');
+      return [];
+    });
+    await tester.pumpWidget(QuestigmaApp(repository: repository));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tentar novamente'), findsOneWidget);
+    await tester.tap(find.text('Tentar novamente'));
+    await tester.pumpAndSettle();
+    expect(attempts, 2);
+    expect(find.text('Nenhum caso disponível no momento.'), findsOneWidget);
   });
 }

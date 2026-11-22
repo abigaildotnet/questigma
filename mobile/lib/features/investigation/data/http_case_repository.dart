@@ -1,6 +1,6 @@
 import 'case_api_client.dart';
-import 'case_repository.dart';
-import 'case_summary.dart';
+import '../domain/case_repository.dart';
+import '../domain/case_summary.dart';
 
 class HttpCaseRepository implements CaseRepository {
   const HttpCaseRepository(this.client);

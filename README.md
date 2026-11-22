@@ -84,7 +84,7 @@ flutter run --dart-define=QUESTIGMA_API_BASE_URL=http://10.0.2.2:5000
 # Produção: configure uma URL HTTPS acessível pelo dispositivo.
 ```
 
-Para gerar o APK com outra URL, use o mesmo `--dart-define` em `flutter build apk`. A URL é definida em `mobile/lib/app/api_config.dart` e não deve conter credenciais.
+Para gerar o APK com outra URL, use o mesmo `--dart-define` em `flutter build apk`. A URL é definida em `mobile/lib/app/api_config.dart` e não deve conter credenciais. Esta tela apenas lista casos; a seleção e abertura dos detalhes serão tratadas em uma issue posterior.
 
 ```powershell
 cd mobile
