@@ -1,8 +1,5 @@
 namespace Questigma.Domain.Investigation;
 
-public sealed record EvidenceDiscovered(Guid EvidenceId);
-public sealed record Accusation(Guid SuspectId, Guid DeductionId, bool IsCorrect);
-
 public sealed class Investigation
 {
     private readonly HashSet<Guid> _discoveredEvidenceIds = [];
@@ -55,6 +52,8 @@ public sealed class Investigation
         EnsureActiveCase(gameCase);
         if (!gameCase.ContainsSuspect(suspectId)) throw new ArgumentException("Unknown suspect for this case.", nameof(suspectId));
         if (!_deductionIds.Contains(deductionId)) throw new InvalidOperationException("An accepted deduction is required to support an accusation.");
+        if (!gameCase.SupportsAccusation(suspectId, deductionId))
+            throw new InvalidOperationException("This deduction does not support an accusation against the suspect.");
         var accusation = new Accusation(suspectId, deductionId, gameCase.IsCorrectSuspect(suspectId));
         _accusations.Add(accusation);
         IsCompleted = accusation.IsCorrect;
