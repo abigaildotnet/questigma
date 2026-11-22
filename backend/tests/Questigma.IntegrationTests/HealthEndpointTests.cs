@@ -38,4 +38,13 @@ public class HealthEndpointTests : IClassFixture<WebApplicationFactory<Program>>
         Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/health")).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/health/db")).StatusCode);
     }
+
+    [Fact]
+    public async Task OpenApiIsNotMappedInProduction()
+    {
+        using var productionFactory = _factory.WithWebHostBuilder(builder => builder.UseEnvironment("Production"));
+        using var client = productionFactory.CreateClient();
+
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/openapi/v1.json")).StatusCode);
+    }
 }

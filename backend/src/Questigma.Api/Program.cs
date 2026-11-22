@@ -1,13 +1,17 @@
 using Questigma.Infrastructure;
 using Questigma.Infrastructure.Persistence;
+using Questigma.Api.Investigation;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddOpenApi();
 var app = builder.Build();
 
+app.MapCaseEndpoints();
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 if (app.Environment.IsDevelopment())
 {
+    app.MapOpenApi();
     app.MapGet("/health/db", async (QuestigmaDbContext db, CancellationToken cancellationToken) =>
     {
         try
