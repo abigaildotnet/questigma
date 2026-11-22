@@ -73,6 +73,19 @@ Os testes de integração sobem PostgreSQL 17 em um contêiner temporário indep
 
 ## Mobile
 
+O aplicativo abre na seleção de casos e consulta `GET /api/v1/cases`. No emulador Android, a URL de desenvolvimento padrão é `http://10.0.2.2:5000` (`10.0.2.2` aponta para o host). Inicie a API no host e configure o PostgreSQL e a migration conforme as seções acima. A lista ficará vazia até haver casos publicados no catálogo; o aplicativo não cria casos de exemplo. O tráfego HTTP sem TLS é permitido somente no build Android de debug.
+
+Para outro dispositivo ou ambiente, informe a URL da API na compilação, sem barra ou rota obrigatória no final:
+
+```powershell
+cd mobile
+flutter run --dart-define=QUESTIGMA_API_BASE_URL=http://10.0.2.2:5000
+# Dispositivo físico: substitua 10.0.2.2 pelo IP do computador acessível na rede.
+# Produção: configure uma URL HTTPS acessível pelo dispositivo.
+```
+
+Para gerar o APK com outra URL, use o mesmo `--dart-define` em `flutter build apk`. A URL é definida em `mobile/lib/app/api_config.dart` e não deve conter credenciais.
+
 ```powershell
 cd mobile
 flutter pub get
