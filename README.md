@@ -53,11 +53,19 @@ dotnet tool run dotnet-ef migrations add NomeDaMigration --project backend/src/Q
 dotnet tool run dotnet-ef database update --project backend/src/Questigma.Infrastructure --startup-project backend/src/Questigma.Api
 ```
 
-Crie a primeira migration somente quando houver entidades e configurações reais. Nenhuma migration vazia é incluída nesta issue. A aplicação de migrations é uma ação explícita; a API não altera o esquema ao iniciar.
+A migration `InitialCatalog` cria somente `catalog_cases`. A aplicação de migrations é uma ação explícita; a API não altera o esquema ao iniciar.
 
 Se `docker compose config` reclamar de variáveis ausentes, confira `.env` na raiz e seus três valores obrigatórios. Se o Compose não alcançar o daemon, inicie Docker Desktop/Engine. Se a porta estiver ocupada, altere `POSTGRES_PORT` em `.env` e a porta na connection string da API. Em `Development`, se `/health` retornar 200 mas `/health/db` retornar 503, confira se o contêiner está saudável com `docker compose ps`, a connection string e se a senha corresponde à do volume existente; alterar `POSTGRES_PASSWORD` após criar o volume não redefine o usuário já criado. Se a API apontar `ConnectionStrings__Questigma` ausente, defina essa variável no **mesmo terminal** em que executar `dotnet run`.
 
-O monólito usa quatro camadas: Domain, Application, Infrastructure e Api. As dependências são Application → Domain, Infrastructure → Application e Domain, Api → Application e Infrastructure. Dentro de cada camada, as funcionalidades futuras serão agrupadas em Investigation, Activities, Progression e Identity. Esses diretórios estão vazios por enquanto.
+O monólito usa quatro camadas: Domain, Application, Infrastructure e Api. As dependências são Application → Domain, Infrastructure → Application e Domain, Api → Application e Infrastructure.
+
+### Catálogo público de casos
+
+`GET /api/v1/cases` lista somente casos publicados com `id`, `title` e `synopsis`. `GET /api/v1/cases/{id}` acrescenta `introduction`. A especificação OpenAPI está em `/openapi/v1.json`. Um caso não publicado e um ID inexistente recebem o mesmo HTTP 404 em `application/problem+json`; um ID malformado recebe HTTP 400 no mesmo formato.
+
+O catálogo usa uma tabela pequena (`catalog_cases`) com os textos públicos e `is_published`. A publicação é estado explícito do domínio, iniciado como rascunho por padrão; não há endpoint editorial nesta issue. A lista e os detalhes filtram a publicação no PostgreSQL e projetam diretamente os campos permitidos. `GameCase`, solução, suspeito correto, regras de acusação, deduções e evidências não são carregados nem serializados por esses endpoints. A persistência de `Investigation` e do conteúdo canônico completo fica para uma issue posterior. Textos de título, sinopse e introdução devem ser revisados como conteúdo público antes de publicar.
+
+Os testes de integração sobem PostgreSQL 17 em um contêiner temporário independente do banco de desenvolvimento; Docker precisa estar disponível para executá-los.
 
 ## Mobile
 

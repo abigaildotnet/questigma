@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Questigma.Infrastructure.Persistence;
+using Questigma.Application.Investigation;
 
 namespace Questigma.Infrastructure;
 
@@ -17,6 +18,8 @@ public static class DependencyInjection
         }
 
         services.AddDbContext<QuestigmaDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddScoped<IPublishedCaseReader, PublishedCaseReader>();
+        services.AddScoped<PublishedCaseQueries>();
         return services;
     }
 }
